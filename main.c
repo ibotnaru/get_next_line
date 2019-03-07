@@ -6,11 +6,11 @@
 /*   By: ibotnaru <ibotnaru@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/06 16:56:52 by ibotnaru          #+#    #+#             */
-/*   Updated: 2019/03/06 17:16:35 by ibotnaru         ###   ########.fr       */
+/*   Updated: 2019/03/07 00:27:36 by ibotnaru         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft/includes/libft.h"
 
 int main ()
 {

@@ -6,7 +6,7 @@
 /*   By: ibotnaru <ibotnaru@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/01 00:06:14 by ibotnaru          #+#    #+#             */
-/*   Updated: 2019/03/07 00:20:11 by ibotnaru         ###   ########.fr       */
+/*   Updated: 2019/03/07 00:33:31 by ibotnaru         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,12 @@ int	next_line(char **str, char **line, int fd)
 	}
 	if (str[fd][len] == '\n')
 	{
-		*line = ft_strsub(str[fd], 0, len);				//make substring(which strarts at 0 and ends before \n) from the file
-		len = len + 1;									//go to the address after \n (this is gonna be where the new line starts)
-		basket = ft_strdup(str[fd] + len);				//duplicate the rest of the string after \n and keep it in basket
-		free(&str[fd]);									//erase from str[fd] because we have it in basket now
+		*line = ft_strsub(str[fd], 0, len);             //make substring(which strarts at 0 and ends before \n) from the file
+		len = len + 1;                                  //go to the address after \n (this is gonna be where the new line starts)
+		basket = ft_strdup(str[fd] + len);              //duplicate the rest of the string after \n and keep it in basket
+		free(&str[fd]);                                 //erase from str[fd] because we have it in basket now
 		str[fd] = basket;
-		if (str[fd][0] == '\0')							//in case the firs line of fd is has \n only
+		if (str[fd][0] == '\0')                         //in case the firs line of fd is has \n only
 			free(&str[fd]);
 	}
 	else if (str[fd][len] == '\0')
@@ -41,24 +41,24 @@ int	next_line(char **str, char **line, int fd)
 	return (1);
 }
 
-int get_next_line(const int fd, char **line)			//fd is ==  to 3 here
+int get_next_line(const int fd, char **line)            //fd is ==  to 3 here
 {
 	char	*temp;
-	char	*str[MAX_FD];								//if we need to read from different files for ex we have 100 files(they are strings)
-	char	buff[BUFF_SIZE + 1];						//our "basket" which can keep only 5 bytes(becase BUFF_SIZE is 5) + 1 for \0
-	int		res;										//number of bytes we return after read()
+	char	*str[MAX_FD];                               //if we need to read from different files for ex we have 100 files(they are strings)
+	char	buff[BUFF_SIZE + 1];                        //our "basket" which can keep only 5 bytes(becase BUFF_SIZE is 5) + 1 for \0
+	int		res;                                        //number of bytes we return after read()
 
 	if (fd < 0 || fd > MAX_FD || line == NULL)
 		return (-1);
-	while ((res = read(fd, buff, BUFF_SIZE)) >= 0)		//while read doest return -1
+	while ((res = read(fd, buff, BUFF_SIZE)) >= 0)      //while read doest return -1
 	{
-		buff[res] = '\0';								//we took 5 bytes(characters) from file and creat the complet string
-		str[fd] = ft_strnew(1);							//we allocated memmory for second parameter of string join						
+		buff[res] = '\0';                               //we took 5 bytes(characters) from file and creat the complet string
+		str[fd] = ft_strnew(1);                         //we allocated memmory for second parameter of string join						
 		temp = ft_strjoin(str[fd], buff);
-		free(&str[fd]);									//we free() to erase everything inside the str[fd] and rewrite latter the result of new temp
-		str[fd] = temp;									//rewrite the result of new temp
-		if (ft_strchr(temp, '\n'))						//fins \n in our string temp
-			break;										//get out of the while loop if find new line
+		free(&str[fd]);                                 //we free() to erase everything inside the str[fd] and rewrite latter the result of new temp
+		str[fd] = temp;                                 //rewrite the result of new temp
+		if (ft_strchr(temp, '\n'))                      //fins \n in our string temp
+			break;                                      //get out of the while loop if find new line
 	}
 	if (res == -1 || (res == 0 && (str[fd] == NULL || str[fd][0] == '\0'))) //in case of error (-1) || nothing to read ||fd is NULL || fd is empty
 		return (res);
