@@ -5,63 +5,61 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ibotnaru <ibotnaru@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/03/01 00:06:14 by ibotnaru          #+#    #+#             */
-/*   Updated: 2019/03/07 00:33:31 by ibotnaru         ###   ########.fr       */
+/*   Created: 2019/03/07 13:07:36 by ibotnaru          #+#    #+#             */
+/*   Updated: 2019/03/07 17:37:07 by ibotnaru         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include 	"get_next_line.h"
+#include "get_next_line.h"
 
-//new_line() this is the function which reads from new line (the text after \n)
-int	next_line(char **str, char **line, int fd)
+int		next_line(char **str, char **line, int fd)
 {
 	int		len;
 	char	*basket;
 
 	len = 0;
-	while ((str[fd][len] != '\n') || (str[fd][len] != '\0'))		
+	while ((str[fd][len] != '\n') && (str[fd][len] != '\0'))
 	{
 		len++;
 	}
 	if (str[fd][len] == '\n')
 	{
-		*line = ft_strsub(str[fd], 0, len);             //make substring(which strarts at 0 and ends before \n) from the file
-		len = len + 1;                                  //go to the address after \n (this is gonna be where the new line starts)
-		basket = ft_strdup(str[fd] + len);              //duplicate the rest of the string after \n and keep it in basket
-		free(&str[fd]);                                 //erase from str[fd] because we have it in basket now
+		*line = ft_strsub(str[fd], 0, len);
+		basket = ft_strdup(str[fd] + len + 1);
+		ft_strdel(&str[fd]);
 		str[fd] = basket;
-		if (str[fd][0] == '\0')                         //in case the firs line of fd is has \n only
-			free(&str[fd]);
+		if (str[fd][0] == '\0')
+			ft_strdel(&str[fd]);
 	}
 	else if (str[fd][len] == '\0')
 	{
 		*line = ft_strdup(str[fd]);
-		free(&str[fd]);
+		ft_strdel(&str[fd]);
 	}
 	return (1);
 }
 
-int get_next_line(const int fd, char **line)            //fd is ==  to 3 here
+int		get_next_line(const int fd, char **line)
 {
-	char	*temp;
-	char	*str[MAX_FD];                               //if we need to read from different files for ex we have 100 files(they are strings)
-	char	buff[BUFF_SIZE + 1];                        //our "basket" which can keep only 5 bytes(becase BUFF_SIZE is 5) + 1 for \0
-	int		res;                                        //number of bytes we return after read()
+	char			*temp;
+	static char		*str[MAX_FD];
+	char			buff[BUFF_SIZE + 1];
+	int				res;
 
 	if (fd < 0 || fd > MAX_FD || line == NULL)
 		return (-1);
-	while ((res = read(fd, buff, BUFF_SIZE)) >= 0)      //while read doest return -1
+	if (!str[fd])
+		str[fd] = ft_strnew(1);
+	while ((res = read(fd, buff, BUFF_SIZE)) > 0)
 	{
-		buff[res] = '\0';                               //we took 5 bytes(characters) from file and creat the complet string
-		str[fd] = ft_strnew(1);                         //we allocated memmory for second parameter of string join						
+		buff[res] = '\0';
 		temp = ft_strjoin(str[fd], buff);
-		free(&str[fd]);                                 //we free() to erase everything inside the str[fd] and rewrite latter the result of new temp
-		str[fd] = temp;                                 //rewrite the result of new temp
-		if (ft_strchr(temp, '\n'))                      //fins \n in our string temp
-			break;                                      //get out of the while loop if find new line
+		ft_strdel(&str[fd]);
+		str[fd] = temp;
+		if (ft_strchr(temp, '\n'))
+			break ;
 	}
-	if (res == -1 || (res == 0 && (str[fd] == NULL || str[fd][0] == '\0'))) //in case of error (-1) || nothing to read ||fd is NULL || fd is empty
+	if (res == -1 || (res == 0 && (str[fd] == NULL || str[fd][0] == '\0')))
 		return (res);
-	//read from new line (the text after \n)
 	return (next_line(str, line, fd));
 }
